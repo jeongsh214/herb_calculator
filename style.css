@@ -284,8 +284,7 @@ body.dark .image-box.selected::after {
 /* 모바일 */
 @media (max-width: 480px) {
   body {
-    margin: 0px;
-	padding : 0 8px;
+    margin: 12px;
   }
 
   .top-bar {
@@ -319,10 +318,5 @@ body.dark .image-box.selected::after {
   .toggle-button,
   .reset-button {
     width: 100%;
-  }
-
-  /* 핵심: 하단 여백 */
-  #groupsWrapper {
-    padding-bottom: 20px;
   }
 }
