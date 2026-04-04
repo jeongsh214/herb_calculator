@@ -13,10 +13,10 @@ const scoreMap = {
 };
 
 const groupLabels = {
-  A: "A그룹\n+1",
-  B: "B그룹\n+2",
-  C: "C그룹\n+3",
-  S: "S그룹\n+4",
+  A: "A그룹",
+  B: "B그룹",
+  C: "C그룹",
+  S: "S그룹",
 };
 
 const items = {
@@ -62,8 +62,10 @@ function renderItems() {
     row.className = "group-row";
 
     const title = document.createElement("div");
-    title.className = "group-title";
-    title.innerText = groupLabels[group];
+    title.className = "group-title";title.innerHTML = `
+  <div class="group-name">${groupLabels[group]}</div>
+  <div class="group-score">+${scoreMap[group]}</div>
+`;
 
     const itemArea = document.createElement("div");
     itemArea.className = "group-items";
