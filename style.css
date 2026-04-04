@@ -16,6 +16,8 @@ body {
   font-size: 20px;
   font-weight: bold;
   gap: 12px;
+  background: inherit;
+  <button id="darkBtn">🌙</button>
 }
 
 .left {
@@ -37,6 +39,8 @@ body {
   transform: translate(-50%, -50%);
   width: 44px;
   height: 36px;
+  min-width: 44px;
+  flex: 0 0 44px;
   border: none;
   border-radius: 8px;
   background: #e5e7eb;
@@ -56,6 +60,7 @@ body {
   border: 1px solid #d1d5db;
   border-radius: 12px;
   box-sizing: border-box;
+  background: inherit;
 }
 
 .need-row {
@@ -85,9 +90,11 @@ body {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
+  color: inherit;
 }
 
 .toggle-button {
+  display: inline-block;
   margin-bottom: 16px;
   width: 200px;
   height: 44px;
@@ -100,6 +107,23 @@ body {
 }
 
 .toggle-button:hover {
+  background: #d1d5db;
+}
+
+.reset-button {
+  display: inline-block;
+  margin-top: 24px;
+  width: 200px;
+  height: 60px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+.reset-button:hover {
   background: #d1d5db;
 }
 
@@ -128,10 +152,22 @@ body {
 .group-title {
   width: 70px;
   min-width: 70px;
-  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
   padding-top: 30px;
   font-size: 16px;
+}
+
+.group-name {
+  font-weight: bold;
+}
+
+.group-score {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #9ca3af;
 }
 
 .group-items {
@@ -149,6 +185,8 @@ body {
   width: 80px;
   height: 80px;
   margin: 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .image-box img {
@@ -156,6 +194,7 @@ body {
   width: 100%;
   height: 100%;
   cursor: pointer;
+  border-radius: 6px;
 }
 
 .image-box::after {
@@ -164,24 +203,14 @@ body {
   inset: 0;
   pointer-events: none;
   box-sizing: border-box;
-  border: 3px solid transparent;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
 }
 
-.image-box:hover::after {
-  border-color: #ff9999;
-}
-
-<<<<<<< HEAD
 .image-box.selected::after {
   border-color: red;
 }
 
-.image-box.selected:hover::after {
-  border-color: red;
-}
-
-=======
->>>>>>> parent of a83611f (ver.0.1.9)
 .label {
   margin-top: 6px;
   font-size: 14px;
@@ -200,24 +229,6 @@ body {
   margin: 0 auto;
 }
 
-.reset-button {
-  margin-top: 24px;
-  width: 200px;
-  height: 60px;
-  font-size: 20px;
-  font-weight: bold;
-  border: none;
-  border-radius: 12px;
-  background: #e5e7eb;
-  cursor: pointer;
-}
-
-.reset-button:hover {
-  background: #d1d5db;
-}
-
-<<<<<<< HEAD
-=======
 .credit {
   position: fixed;
   right: 14px;
@@ -240,7 +251,34 @@ body {
   object-fit: contain;
 }
 
->>>>>>> parent of a83611f (ver.0.1.9)
+/* hover (PC만 적용) */
+@media (hover: hover) and (pointer: fine) {
+  .image-box:hover::after {
+    border-color: #ff9999;
+  }
+
+  .image-box.selected:hover::after {
+    border-color: #ff9999;
+  }
+
+  body.dark .image-box:hover::after {
+    border-color: #f87171;
+  }
+
+  body.dark .image-box.selected:hover::after {
+    border-color: #f87171;
+  }
+}
+
+/* 모바일 터치 */
+.image-box:active::after {
+  border-color: #ff9999;
+}
+
+body.dark .image-box:active::after {
+  border-color: #f87171;
+}
+
 body.dark {
   background: #111827;
   color: #e5e7eb;
@@ -252,6 +290,10 @@ body.dark .need-box {
 
 body.dark .group-row {
   border-color: #374151;
+}
+
+body.dark .group-score {
+  color: #6b7280;
 }
 
 body.dark .reset-button,
@@ -269,13 +311,16 @@ body.dark #darkBtn:hover {
   background: #374151;
 }
 
-<<<<<<< HEAD
-body.dark .image-box:hover::after {
-  border-color: #f87171;
-=======
+body.dark .image-box::after {
+  border-color: #374151;
+}
+
+body.dark .image-box.selected::after {
+  border-color: red;
+}
+
 body.dark .credit {
   color: #6b7280;
->>>>>>> parent of a83611f (ver.0.1.9)
 }
 
 /* 태블릿 */
@@ -332,12 +377,18 @@ body.dark .credit {
   }
 
   .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     font-size: 16px;
     gap: 8px;
     min-height: 44px;
+    margin-bottom: 10px;
+    padding: 6px 0;
+    background: inherit;
   }
 
   .left {
@@ -350,12 +401,23 @@ body.dark .credit {
     font-size: 16px;
   }
 
-  #darkBtn {
-    position: static;
-    transform: none;
-    width: 40px;
-    height: 34px;
-    justify-self: center;
+#darkBtn {
+  position: static;
+  transform: none;
+  width: 40px;
+  height: 34px;
+  min-width: 40px;
+  flex: 0 0 40px;
+  justify-self: center;
+}
+
+  .need-box {
+    position: sticky;
+    top: 56px;
+    z-index: 999;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: inherit;
   }
 
   .need-row {
@@ -382,38 +444,35 @@ body.dark .credit {
 
   .toggle-button,
   .reset-button {
-    width: 100%;
-    max-width: 320px;
-<<<<<<< HEAD
+    width: 90%;
+    max-width: 260px;
   }
 
   .toggle-button {
-    height: 42px;
-    font-size: 15px;
-  }
-
-  .reset-button {
-    height: 52px;
-    font-size: 18px;
-  }
-
-  .groups-container {
-    width: 100%;
+    margin-bottom: 8px;
   }
 
   .group-row {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
-    padding: 14px 0;
+    padding: 10px 0 14px;
   }
 
   .group-title {
     width: 100%;
     min-width: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     text-align: left;
     padding-top: 0;
     font-size: 15px;
+  }
+
+  .group-score {
+    margin-top: 0;
+    font-size: 13px;
   }
 
   .group-items {
@@ -443,154 +502,5 @@ body.dark .credit {
   .label {
     font-size: 12px;
     line-height: 1.3;
-=======
-  }
-
-  .toggle-button {
-    height: 42px;
-    font-size: 15px;
-  }
-
-  .reset-button {
-    height: 52px;
-    font-size: 18px;
-  }
-
-  .groups-container {
-    width: 100%;
-  }
-
-  .group-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 14px 0;
-  }
-
-  .group-title {
-    width: 100%;
-    min-width: 0;
-    text-align: left;
-    padding-top: 0;
-    font-size: 15px;
-  }
-
-  .group-items {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    width: 100%;
-  }
-
-  .item {
-    width: 100%;
-  }
-
-  .image-box {
-    width: 100%;
-    max-width: 72px;
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  .empty {
-    width: 100%;
-    max-width: 72px;
-    aspect-ratio: 1 / 1;
-    height: auto;
-  }
-
-  .label {
-    font-size: 12px;
-    line-height: 1.3;
-  }
-}
-
-body.dark .image-box.selected::after {
-  border-color: red;
-}
-
-body.dark .image-box.selected:hover::after {
-  border-color: red;
-}
-
-body.dark .image-box::after {
-  border-color: #374151;
-}
-
-body.dark .image-box:hover::after {
-  border-color: #f87171;
-}
-
-.image-box::after {
-  border: 2px solid #d1d5db;
-}
-
-.image-box.selected::after {
-  border-color: red;
-}
-
-/* 가장 마지막 + 가장 구체적으로 */
-.image-box.selected:hover::after {
-  border-color: #ff9999;
-}
-@media (hover: hover) and (pointer: fine) {
-  .image-box:hover::after {
-    border-color: #ff9999;
-  }
-
-  .image-box.selected:hover::after {
-    border-color: #ff9999;
-  }
-
-  body.dark .image-box:hover::after {
-    border-color: #f87171;
-  }
-
-  body.dark .image-box.selected:hover::after {
-    border-color: #f87171;
-  }
-}
-
-.image-box:active::after {
-  border-color: #ff9999;
-}
-
-body.dark .image-box:active::after {
-  border-color: #f87171;
-}
-
-@media (max-width: 480px) {
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: #ffffff;
-    padding: 6px 0;
-  }
-
-  .need-box {
-    position: sticky;
-    top: 44px; /* top-bar 높이에 맞춤 */
-    z-index: 999;
-    background: #ffffff;
-    padding: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  body.dark .top-bar,
-  body.dark .need-box {
-    background: #111827;
-  }
-}
-
-@media (max-width: 480px) {
-  .reset-button {
-    margin-bottom: 50px;
-  }
-
-  #groupsWrapper {
-    padding-bottom: 50px;
->>>>>>> parent of a83611f (ver.0.1.9)
   }
 }

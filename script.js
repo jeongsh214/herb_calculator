@@ -1,10 +1,11 @@
 let total = 0;
 let resultMap = {};
-let neededTotalMap = {};
-let isCollapsed = false;
 
 const IMG_PATH = "items/";
+const needSelect = document.getElementById("needSelect");
+const neededTotalsEl = document.getElementById("neededTotals");
 
+let needMap = {};
 const scoreMap = {
   A: 1,
   B: 2,
@@ -53,8 +54,6 @@ const items = {
 const groupsContainer = document.getElementById("groupsContainer");
 const totalEl = document.getElementById("total");
 const resultEl = document.getElementById("result");
-const neededTotalsEl = document.getElementById("neededTotals");
-const needSelectEl = document.getElementById("needSelect");
 
 function renderItems() {
   for (const group in items) {
@@ -62,10 +61,8 @@ function renderItems() {
     row.className = "group-row";
 
     const title = document.createElement("div");
-    title.className = "group-title";title.innerHTML = `
-  <div class="group-name">${groupLabels[group]}</div>
-  <div class="group-score">+${scoreMap[group]}</div>
-`;
+    title.className = "group-title";
+    title.innerText = groupLabels[group];
 
     const itemArea = document.createElement("div");
     itemArea.className = "group-items";
@@ -128,105 +125,28 @@ async function loadCSV() {
     resultMap = {};
 
     rows.forEach((line) => {
-      const [score, result, lightColor, darkColor] = line.split(",");
+	const [score, result, color] = line.split(",");
+	if (score && result) {
+		resultMap[score.trim()] = {
+		text: result.trim(),
+		color: (color || "#000000").trim(),
+		};
+	}
+	});
 
-      if (score && result) {
-        resultMap[score.trim()] = {
-          text: result.trim(),
-          lightColor: (lightColor || "#000000").trim(),
-          darkColor: (darkColor || lightColor || "#ffffff").trim(),
-        };
-      }
-    });
+    updateResult();
   } catch (error) {
-    console.error("results.csv 로드 실패:", error);
+    console.error("CSV 로드 실패:", error);
     resultEl.innerText = "CSV 오류";
-    resultEl.style.color = "#000000";
   }
-}
-
-async function loadNeedCSV() {
-  try {
-    const response = await fetch("./need.csv");
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const text = await response.text();
-    const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
-    const rows = lines.slice(1);
-
-    neededTotalMap = {};
-
-    rows.forEach((line) => {
-      const [result, totals] = line.split(",");
-
-      if (result && totals) {
-        neededTotalMap[result.trim()] = totals
-          .split("|")
-          .map((value) => value.trim())
-          .filter((value) => value !== "");
-      }
-    });
-
-    renderNeedOptions();
-  } catch (error) {
-    console.error("need.csv 로드 실패:", error);
-    neededTotalsEl.innerText = "-";
-  }
-}
-
-function renderNeedOptions() {
-  needSelectEl.innerHTML = '<option value="">환 선택</option>';
-
-  Object.keys(neededTotalMap).forEach((name) => {
-    const option = document.createElement("option");
-    option.value = name;
-    option.textContent = name;
-    needSelectEl.appendChild(option);
-  });
-}
-
-needSelectEl.addEventListener("change", () => {
-  const selectedName = needSelectEl.value;
-  const totals = neededTotalMap[selectedName];
-
-  if (!selectedName || !totals) {
-    neededTotalsEl.innerText = "-";
-    return;
-  }
-
-  neededTotalsEl.innerText = totals.join(", ");
-});
-
-function getResultColor(data) {
-  if (!data) return "#000000";
-  return document.body.classList.contains("dark")
-    ? data.darkColor
-    : data.lightColor;
-}
-
-function applyCurrentResultColor() {
-  const data = resultMap[String(total)];
-  const selectedCount = document.querySelectorAll("img.selected").length;
-
-  if (selectedCount < 3 || !data) {
-    resultEl.style.color = document.body.classList.contains("dark")
-      ? "#e5e7eb"
-      : "#000000";
-    return;
-  }
-
-  resultEl.style.color = getResultColor(data);
 }
 
 function toggleItem(element) {
   const group = element.dataset.group;
   const score = scoreMap[group];
   const selectedCount = document.querySelectorAll("img.selected").length;
-  const wrapper = element.parentElement.parentElement;
-  const imageBox = element.parentElement;
+  const wrapper = element.parentElement.parentElement; // .item
+  const imageBox = element.parentElement; // .image-box
 
   if (element.classList.contains("selected")) {
     element.classList.remove("selected");
@@ -251,9 +171,7 @@ function updateResult() {
 
   if (selectedCount < 3) {
     resultEl.innerText = "-";
-    resultEl.style.color = document.body.classList.contains("dark")
-      ? "#e5e7eb"
-      : "#000000";
+    resultEl.style.color = "#000000";
     return;
   }
 
@@ -261,12 +179,10 @@ function updateResult() {
 
   if (data) {
     resultEl.innerText = data.text;
-    resultEl.style.color = getResultColor(data);
+    resultEl.style.color = data.color;
   } else {
     resultEl.innerText = "-";
-    resultEl.style.color = document.body.classList.contains("dark")
-      ? "#e5e7eb"
-      : "#000000";
+    resultEl.style.color = "#000000";
   }
 }
 
@@ -275,12 +191,7 @@ function reset() {
   totalEl.innerText = total;
 
   resultEl.innerText = "-";
-  resultEl.style.color = document.body.classList.contains("dark")
-    ? "#e5e7eb"
-    : "#000000";
-
-  neededTotalsEl.innerText = "-";
-  needSelectEl.value = "";
+  resultEl.style.color = "#000000";
 
   document.querySelectorAll("img").forEach((img) => {
     img.classList.remove("selected");
@@ -295,57 +206,65 @@ function reset() {
   });
 }
 
-function toggleGroups() {
-  const wrapper = document.getElementById("groupsWrapper");
-  const btn = document.getElementById("toggleBtn");
+renderItems();
+loadCSV();
+async function loadNeedCSV() {
+  try {
+    const response = await fetch("./need.csv");
+    const text = await response.text();
 
-  isCollapsed = !isCollapsed;
+    const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+    const rows = lines.slice(1);
 
-  if (isCollapsed) {
-    wrapper.classList.add("hidden");
-    btn.innerText = "전체 펼치기";
-  } else {
-    wrapper.classList.remove("hidden");
-    btn.innerText = "전체 접기";
+    needMap = {};
+
+    rows.forEach((line) => {
+      const [name, need] = line.split(",");
+      if (name && need) {
+        needMap[name.trim()] = need.trim();
+
+        const option = document.createElement("option");
+        option.value = name.trim();
+        option.innerText = name.trim();
+        needSelect.appendChild(option);
+      }
+    });
+
+  } catch (e) {
+    console.error("need.csv 로드 실패", e);
   }
 }
+needSelect.addEventListener("change", () => {
+  const selected = needSelect.value;
 
-function toggleDarkMode() {
-  const isDark = !document.body.classList.contains("dark");
-  applyDarkMode(isDark);
-  setCookie("darkMode", isDark ? "true" : "false");
+  if (!selected || !needMap[selected]) {
+    neededTotalsEl.innerText = "-";
+    return;
+  }
+
+  neededTotalsEl.innerText = needMap[selected];
+});
+loadNeedCSV();
+
+const darkBtn = document.getElementById("darkBtn");
+
+// 저장된 값 적용
+if (localStorage.getItem("darkMode") === "on") {
+  document.body.classList.add("dark");
+  darkBtn.innerText = "☀️";
 }
 
-async function init() {
-  loadDarkModePreference();
-  renderItems();
-  await loadCSV();
-  await loadNeedCSV();
-  applyCurrentResultColor();
-}
+// 버튼 클릭
+darkBtn.onclick = () => {
+  document.body.classList.toggle("dark");
 
-init();
-function applyDarkMode(isDark) {
-  const btn = document.getElementById("darkBtn");
+  const isDark = document.body.classList.contains("dark");
 
   if (isDark) {
-    document.body.classList.add("dark");
-    if (btn) btn.innerText = "☀️";
+    localStorage.setItem("darkMode", "on");
+    darkBtn.innerText = "☀️";
   } else {
-    document.body.classList.remove("dark");
-    if (btn) btn.innerText = "🌙";
+    localStorage.setItem("darkMode", "off");
+    darkBtn.innerText = "🌙";
   }
-
-  applyCurrentResultColor();
-}
-
-function loadDarkModePreference() {
-  const savedMode = localStorage.getItem("darkMode");
-  applyDarkMode(savedMode === "true");
-}
-
-function toggleDarkMode() {
-  const isDark = !document.body.classList.contains("dark");
-  applyDarkMode(isDark);
-  localStorage.setItem("darkMode", isDark ? "true" : "false");
-}
+};
