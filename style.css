@@ -245,7 +245,6 @@ body {
 }
 
 .credit-logo {
-  display: inline-block;
   width: 12px;
   height: 12px;
   object-fit: contain;
