@@ -229,6 +229,7 @@ body.dark .image-box.selected::after {
   .need-row {
     flex-direction: column;
     align-items: stretch;
+<<<<<<< HEAD
   }
 
   .group-row {
@@ -260,4 +261,37 @@ body.dark .image-box.selected::after {
     z-index: 999;
     background: #ffffff;
   }
+=======
+  }
+
+  .group-row {
+    flex-direction: column;
+    padding-top: 10px;
+  }
+
+  .group-title {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .group-items {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .toggle-button,
+  .reset-button {
+    width: 90%;
+  }
+  
+  .need-box {
+    position: sticky;
+    top: 48px; /* top-bar 높이에 맞게 */
+    z-index: 999;
+    background: #ffffff;
+  }
+>>>>>>> parent of 39ad24d (ver.0.1.15)
 }
