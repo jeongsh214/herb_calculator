@@ -7,6 +7,7 @@ body {
 }
 
 .top-bar {
+  position: relative; /* 추가 */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,7 +26,12 @@ body {
 }
 
 #darkBtn {
-  margin: 0 10px;
+  position: absolute;      /* 핵심 */
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+
   width: 44px;
   height: 36px;
   border: none;
