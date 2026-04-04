@@ -504,8 +504,13 @@ body.dark .image-box:active::after {
     background: #111827;
   }
 }
+
 @media (max-width: 480px) {
   .reset-button {
-    margin-bottom: 80px;
+    margin-bottom: 50px;
+  }
+
+  #groupsWrapper {
+    padding-bottom: 50px;
   }
 }
