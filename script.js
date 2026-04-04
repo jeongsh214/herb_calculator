@@ -59,10 +59,20 @@ function renderItems() {
   for (const group in items) {
     const row = document.createElement("div");
     row.className = "group-row";
+	
+const title = document.createElement("div");
+title.className = "group-title";
 
-    const title = document.createElement("div");
-    title.className = "group-title";
-    title.innerText = groupLabels[group];
+const name = document.createElement("div");
+name.className = "group-name";
+name.innerText = groupLabels[group];
+
+const score = document.createElement("div");
+score.className = "group-score";
+score.innerText = `+${scoreMap[group]}`;
+
+title.appendChild(name);
+title.appendChild(score);
 
     const itemArea = document.createElement("div");
     itemArea.className = "group-items";
