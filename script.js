@@ -323,27 +323,6 @@ async function init() {
 }
 
 init();
-
-function setCookie(name, value, days = 365) {
-  const date = new Date();
-  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${date.toUTCString()}; path=/`;
-}
-
-function getCookie(name) {
-  const cookieName = `${name}=`;
-  const cookies = document.cookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.indexOf(cookieName) === 0) {
-      return decodeURIComponent(cookie.substring(cookieName.length));
-    }
-  }
-
-  return null;
-}
-
 function applyDarkMode(isDark) {
   const btn = document.getElementById("darkBtn");
 
@@ -359,7 +338,12 @@ function applyDarkMode(isDark) {
 }
 
 function loadDarkModePreference() {
-  const savedMode = getCookie("darkMode");
+  const savedMode = localStorage.getItem("darkMode");
   applyDarkMode(savedMode === "true");
 }
 
+function toggleDarkMode() {
+  const isDark = !document.body.classList.contains("dark");
+  applyDarkMode(isDark);
+  localStorage.setItem("darkMode", isDark ? "true" : "false");
+}
