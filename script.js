@@ -13,10 +13,10 @@ const scoreMap = {
 };
 
 const groupLabels = {
-  A: "A그룹",
-  B: "B그룹",
-  C: "C그룹",
-  S: "S그룹",
+  A: "A그룹\n+1",
+  B: "B그룹\n+2",
+  C: "C그룹\n+3",
+  S: "S그룹\n+4",
 };
 
 const items = {
