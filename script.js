@@ -54,6 +54,7 @@ const groupsContainer = document.getElementById("groupsContainer");
 const totalEl = document.getElementById("total");
 const resultEl = document.getElementById("result");
 const neededTotalsEl = document.getElementById("neededTotals");
+const needSelectEl = document.getElementById("needSelect");
 
 function renderItems() {
   for (const group in items) {
@@ -125,11 +126,13 @@ async function loadCSV() {
     resultMap = {};
 
     rows.forEach((line) => {
-      const [score, result, color] = line.split(",");
+      const [score, result, lightColor, darkColor] = line.split(",");
+
       if (score && result) {
         resultMap[score.trim()] = {
           text: result.trim(),
-          color: (color || "#000000").trim(),
+          lightColor: (lightColor || "#000000").trim(),
+          darkColor: (darkColor || lightColor || "#ffffff").trim(),
         };
       }
     });
@@ -164,10 +167,56 @@ async function loadNeedCSV() {
           .filter((value) => value !== "");
       }
     });
+
+    renderNeedOptions();
   } catch (error) {
     console.error("need.csv 로드 실패:", error);
     neededTotalsEl.innerText = "-";
   }
+}
+
+function renderNeedOptions() {
+  needSelectEl.innerHTML = '<option value="">환 선택</option>';
+
+  Object.keys(neededTotalMap).forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    needSelectEl.appendChild(option);
+  });
+}
+
+needSelectEl.addEventListener("change", () => {
+  const selectedName = needSelectEl.value;
+  const totals = neededTotalMap[selectedName];
+
+  if (!selectedName || !totals) {
+    neededTotalsEl.innerText = "-";
+    return;
+  }
+
+  neededTotalsEl.innerText = totals.join(", ");
+});
+
+function getResultColor(data) {
+  if (!data) return "#000000";
+  return document.body.classList.contains("dark")
+    ? data.darkColor
+    : data.lightColor;
+}
+
+function applyCurrentResultColor() {
+  const data = resultMap[String(total)];
+  const selectedCount = document.querySelectorAll("img.selected").length;
+
+  if (selectedCount < 3 || !data) {
+    resultEl.style.color = document.body.classList.contains("dark")
+      ? "#e5e7eb"
+      : "#000000";
+    return;
+  }
+
+  resultEl.style.color = getResultColor(data);
 }
 
 function toggleItem(element) {
@@ -195,21 +244,10 @@ function toggleItem(element) {
   updateResult();
 }
 
-function updateNeededTotals(resultName) {
-  const totals = neededTotalMap[resultName];
-
-  if (!resultName || !totals) {
-    neededTotalsEl.innerText = "-";
-    return;
-  }
-
-  neededTotalsEl.innerText = totals.join(", ");
-}
-
 function updateResult() {
   const selectedCount = document.querySelectorAll("img.selected").length;
 
-  if (selectedCount <= 2) {
+  if (selectedCount < 3) {
     return;
   }
 
@@ -217,12 +255,12 @@ function updateResult() {
 
   if (data) {
     resultEl.innerText = data.text;
-    resultEl.style.color = data.color;
-    updateNeededTotals(data.text);
+    resultEl.style.color = getResultColor(data);
   } else {
     resultEl.innerText = "-";
-    resultEl.style.color = "#000000";
-    updateNeededTotals("");
+    resultEl.style.color = document.body.classList.contains("dark")
+      ? "#e5e7eb"
+      : "#000000";
   }
 }
 
@@ -231,8 +269,12 @@ function reset() {
   totalEl.innerText = total;
 
   resultEl.innerText = "-";
-  resultEl.style.color = "#000000";
+  resultEl.style.color = document.body.classList.contains("dark")
+    ? "#e5e7eb"
+    : "#000000";
+
   neededTotalsEl.innerText = "-";
+  needSelectEl.value = "";
 
   document.querySelectorAll("img").forEach((img) => {
     img.classList.remove("selected");
@@ -260,6 +302,21 @@ function toggleGroups() {
     wrapper.classList.remove("hidden");
     btn.innerText = "전체 접기";
   }
+}
+
+function toggleDarkMode() {
+  const body = document.body;
+  const btn = document.getElementById("darkBtn");
+
+  body.classList.toggle("dark");
+
+  if (body.classList.contains("dark")) {
+    btn.innerText = "☀️";
+  } else {
+    btn.innerText = "🌙";
+  }
+
+  applyCurrentResultColor();
 }
 
 async function init() {

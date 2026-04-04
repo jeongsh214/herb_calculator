@@ -11,13 +11,26 @@
     <div class="left">
       합계: <span id="total">0</span>
     </div>
+
+    <button id="darkBtn" onclick="toggleDarkMode()">🌙</button>
+
     <div class="right">
       결과: <span id="result">-</span>
     </div>
   </div>
 
   <div class="need-box">
-    필요 총합: <span id="neededTotals">-</span>
+    <div class="need-row">
+      <div class="need-left">
+        필요 총합: <span id="neededTotals">-</span>
+      </div>
+
+      <div class="need-right">
+        <select id="needSelect">
+          <option value="">환 선택</option>
+        </select>
+      </div>
+    </div>
   </div>
 
   <button id="toggleBtn" class="toggle-button" onclick="toggleGroups()">전체 접기</button>
