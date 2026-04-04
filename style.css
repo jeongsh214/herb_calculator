@@ -171,6 +171,7 @@ body {
   border-color: #ff9999;
 }
 
+<<<<<<< HEAD
 .image-box.selected::after {
   border-color: red;
 }
@@ -179,6 +180,8 @@ body {
   border-color: red;
 }
 
+=======
+>>>>>>> parent of a83611f (ver.0.1.9)
 .label {
   margin-top: 6px;
   font-size: 14px;
@@ -213,6 +216,31 @@ body {
   background: #d1d5db;
 }
 
+<<<<<<< HEAD
+=======
+.credit {
+  position: fixed;
+  right: 14px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1;
+  color: #9ca3af;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.credit-logo {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+}
+
+>>>>>>> parent of a83611f (ver.0.1.9)
 body.dark {
   background: #111827;
   color: #e5e7eb;
@@ -241,8 +269,13 @@ body.dark #darkBtn:hover {
   background: #374151;
 }
 
+<<<<<<< HEAD
 body.dark .image-box:hover::after {
   border-color: #f87171;
+=======
+body.dark .credit {
+  color: #6b7280;
+>>>>>>> parent of a83611f (ver.0.1.9)
 }
 
 /* 태블릿 */
@@ -351,6 +384,7 @@ body.dark .image-box:hover::after {
   .reset-button {
     width: 100%;
     max-width: 320px;
+<<<<<<< HEAD
   }
 
   .toggle-button {
@@ -409,5 +443,154 @@ body.dark .image-box:hover::after {
   .label {
     font-size: 12px;
     line-height: 1.3;
+=======
+  }
+
+  .toggle-button {
+    height: 42px;
+    font-size: 15px;
+  }
+
+  .reset-button {
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .groups-container {
+    width: 100%;
+  }
+
+  .group-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 0;
+  }
+
+  .group-title {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+    padding-top: 0;
+    font-size: 15px;
+  }
+
+  .group-items {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .item {
+    width: 100%;
+  }
+
+  .image-box {
+    width: 100%;
+    max-width: 72px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .empty {
+    width: 100%;
+    max-width: 72px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
+
+  .label {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+}
+
+body.dark .image-box.selected::after {
+  border-color: red;
+}
+
+body.dark .image-box.selected:hover::after {
+  border-color: red;
+}
+
+body.dark .image-box::after {
+  border-color: #374151;
+}
+
+body.dark .image-box:hover::after {
+  border-color: #f87171;
+}
+
+.image-box::after {
+  border: 2px solid #d1d5db;
+}
+
+.image-box.selected::after {
+  border-color: red;
+}
+
+/* 가장 마지막 + 가장 구체적으로 */
+.image-box.selected:hover::after {
+  border-color: #ff9999;
+}
+@media (hover: hover) and (pointer: fine) {
+  .image-box:hover::after {
+    border-color: #ff9999;
+  }
+
+  .image-box.selected:hover::after {
+    border-color: #ff9999;
+  }
+
+  body.dark .image-box:hover::after {
+    border-color: #f87171;
+  }
+
+  body.dark .image-box.selected:hover::after {
+    border-color: #f87171;
+  }
+}
+
+.image-box:active::after {
+  border-color: #ff9999;
+}
+
+body.dark .image-box:active::after {
+  border-color: #f87171;
+}
+
+@media (max-width: 480px) {
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    padding: 6px 0;
+  }
+
+  .need-box {
+    position: sticky;
+    top: 44px; /* top-bar 높이에 맞춤 */
+    z-index: 999;
+    background: #ffffff;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.dark .top-bar,
+  body.dark .need-box {
+    background: #111827;
+  }
+}
+
+@media (max-width: 480px) {
+  .reset-button {
+    margin-bottom: 50px;
+  }
+
+  #groupsWrapper {
+    padding-bottom: 50px;
+>>>>>>> parent of a83611f (ver.0.1.9)
   }
 }
