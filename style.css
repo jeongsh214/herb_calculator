@@ -251,7 +251,7 @@ body.dark .image-box.selected::after {
 
   .toggle-button,
   .reset-button {
-    width: 90%;
+    width: 80%;
   }
   
   .need-box {
