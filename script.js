@@ -248,6 +248,10 @@ function updateResult() {
   const selectedCount = document.querySelectorAll("img.selected").length;
 
   if (selectedCount < 3) {
+    resultEl.innerText = "-";
+    resultEl.style.color = document.body.classList.contains("dark")
+      ? "#e5e7eb"
+      : "#000000";
     return;
   }
 
