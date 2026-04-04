@@ -479,3 +479,28 @@ body.dark .image-box:hover::after {
 body.dark .image-box:active::after {
   border-color: #f87171;
 }
+
+@media (max-width: 480px) {
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    padding: 6px 0;
+  }
+
+  .need-box {
+    position: sticky;
+    top: 44px; /* top-bar 높이에 맞춤 */
+    z-index: 999;
+    background: #ffffff;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.dark .top-bar,
+  body.dark .need-box {
+    background: #111827;
+  }
+}
