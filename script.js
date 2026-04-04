@@ -309,18 +309,9 @@ function toggleGroups() {
 }
 
 function toggleDarkMode() {
-  const body = document.body;
-  const btn = document.getElementById("darkBtn");
-
-  body.classList.toggle("dark");
-
-  if (body.classList.contains("dark")) {
-    btn.innerText = "☀️";
-  } else {
-    btn.innerText = "🌙";
-  }
-
-  applyCurrentResultColor();
+  const isDark = !document.body.classList.contains("dark");
+  applyDarkMode(isDark);
+  setCookie("darkMode", isDark ? "true" : "false");
 }
 
 async function init() {
@@ -330,3 +321,42 @@ async function init() {
 }
 
 init();
+
+function setCookie(name, value, days = 365) {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${date.toUTCString()}; path=/`;
+}
+
+function getCookie(name) {
+  const cookieName = `${name}=`;
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.indexOf(cookieName) === 0) {
+      return decodeURIComponent(cookie.substring(cookieName.length));
+    }
+  }
+
+  return null;
+}
+
+function applyDarkMode(isDark) {
+  const btn = document.getElementById("darkBtn");
+
+  if (isDark) {
+    document.body.classList.add("dark");
+    if (btn) btn.innerText = "☀️";
+  } else {
+    document.body.classList.remove("dark");
+    if (btn) btn.innerText = "🌙";
+  }
+
+  applyCurrentResultColor();
+}
+
+function loadDarkModePreference() {
+  const savedMode = getCookie("darkMode");
+  applyDarkMode(savedMode === "true");
+}
