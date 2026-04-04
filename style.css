@@ -215,6 +215,10 @@ body.dark .image-box.selected::after {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     font-size: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
   }
 
   #darkBtn {
@@ -245,5 +249,12 @@ body.dark .image-box.selected::after {
   .toggle-button,
   .reset-button {
     width: 90%;
+  }
+  
+  .need-box {
+    position: sticky;
+    top: 48px; /* top-bar 높이에 맞게 */
+    z-index: 999;
+    background: #ffffff;
   }
 }
