@@ -1,5 +1,7 @@
 let total = 0;
 let resultMap = {};
+let neededTotalMap = {};
+let isCollapsed = false;
 
 const IMG_PATH = "items/";
 
@@ -51,6 +53,7 @@ const items = {
 const groupsContainer = document.getElementById("groupsContainer");
 const totalEl = document.getElementById("total");
 const resultEl = document.getElementById("result");
+const neededTotalsEl = document.getElementById("neededTotals");
 
 function renderItems() {
   for (const group in items) {
@@ -122,19 +125,48 @@ async function loadCSV() {
     resultMap = {};
 
     rows.forEach((line) => {
-	const [score, result, color] = line.split(",");
-	if (score && result) {
-		resultMap[score.trim()] = {
-		text: result.trim(),
-		color: (color || "#000000").trim(),
-		};
-	}
-	});
-
-    updateResult();
+      const [score, result, color] = line.split(",");
+      if (score && result) {
+        resultMap[score.trim()] = {
+          text: result.trim(),
+          color: (color || "#000000").trim(),
+        };
+      }
+    });
   } catch (error) {
-    console.error("CSV 로드 실패:", error);
+    console.error("results.csv 로드 실패:", error);
     resultEl.innerText = "CSV 오류";
+    resultEl.style.color = "#000000";
+  }
+}
+
+async function loadNeedCSV() {
+  try {
+    const response = await fetch("./need.csv");
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const text = await response.text();
+    const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
+    const rows = lines.slice(1);
+
+    neededTotalMap = {};
+
+    rows.forEach((line) => {
+      const [result, totals] = line.split(",");
+
+      if (result && totals) {
+        neededTotalMap[result.trim()] = totals
+          .split("|")
+          .map((value) => value.trim())
+          .filter((value) => value !== "");
+      }
+    });
+  } catch (error) {
+    console.error("need.csv 로드 실패:", error);
+    neededTotalsEl.innerText = "-";
   }
 }
 
@@ -142,8 +174,8 @@ function toggleItem(element) {
   const group = element.dataset.group;
   const score = scoreMap[group];
   const selectedCount = document.querySelectorAll("img.selected").length;
-  const wrapper = element.parentElement.parentElement; // .item
-  const imageBox = element.parentElement; // .image-box
+  const wrapper = element.parentElement.parentElement;
+  const imageBox = element.parentElement;
 
   if (element.classList.contains("selected")) {
     element.classList.remove("selected");
@@ -163,12 +195,21 @@ function toggleItem(element) {
   updateResult();
 }
 
+function updateNeededTotals(resultName) {
+  const totals = neededTotalMap[resultName];
+
+  if (!resultName || !totals) {
+    neededTotalsEl.innerText = "-";
+    return;
+  }
+
+  neededTotalsEl.innerText = totals.join(", ");
+}
+
 function updateResult() {
   const selectedCount = document.querySelectorAll("img.selected").length;
 
-  if (selectedCount < 3) {
-    resultEl.innerText = "-";
-    resultEl.style.color = "#000000";
+  if (selectedCount <= 2) {
     return;
   }
 
@@ -177,9 +218,11 @@ function updateResult() {
   if (data) {
     resultEl.innerText = data.text;
     resultEl.style.color = data.color;
+    updateNeededTotals(data.text);
   } else {
     resultEl.innerText = "-";
     resultEl.style.color = "#000000";
+    updateNeededTotals("");
   }
 }
 
@@ -189,6 +232,7 @@ function reset() {
 
   resultEl.innerText = "-";
   resultEl.style.color = "#000000";
+  neededTotalsEl.innerText = "-";
 
   document.querySelectorAll("img").forEach((img) => {
     img.classList.remove("selected");
@@ -203,5 +247,25 @@ function reset() {
   });
 }
 
-renderItems();
-loadCSV();
+function toggleGroups() {
+  const wrapper = document.getElementById("groupsWrapper");
+  const btn = document.getElementById("toggleBtn");
+
+  isCollapsed = !isCollapsed;
+
+  if (isCollapsed) {
+    wrapper.classList.add("hidden");
+    btn.innerText = "전체 펼치기";
+  } else {
+    wrapper.classList.remove("hidden");
+    btn.innerText = "전체 접기";
+  }
+}
+
+async function init() {
+  renderItems();
+  await loadCSV();
+  await loadNeedCSV();
+}
+
+init();

@@ -16,9 +16,16 @@
     </div>
   </div>
 
-  <div id="groupsContainer" class="groups-container"></div>
+  <div class="need-box">
+    필요 총합: <span id="neededTotals">-</span>
+  </div>
 
-  <button class="reset-button" onclick="reset()">초기화</button>
+  <button id="toggleBtn" class="toggle-button" onclick="toggleGroups()">전체 접기</button>
+
+  <div id="groupsWrapper">
+    <div id="groupsContainer" class="groups-container"></div>
+    <button class="reset-button" onclick="reset()">초기화</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
