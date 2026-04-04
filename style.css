@@ -233,6 +233,7 @@ body.dark .image-box.selected::after {
 
   .group-row {
     flex-direction: column;
+    padding-top: 10px;
   }
 
   .group-title {
@@ -240,6 +241,8 @@ body.dark .image-box.selected::after {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    padding-top: 0;
+    margin-top: 0;
   }
 
   .group-items {
