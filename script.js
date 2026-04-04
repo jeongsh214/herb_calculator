@@ -315,9 +315,11 @@ function toggleDarkMode() {
 }
 
 async function init() {
+  loadDarkModePreference();
   renderItems();
   await loadCSV();
   await loadNeedCSV();
+  applyCurrentResultColor();
 }
 
 init();
@@ -360,3 +362,4 @@ function loadDarkModePreference() {
   const savedMode = getCookie("darkMode");
   applyDarkMode(savedMode === "true");
 }
+

@@ -7,7 +7,7 @@ body {
 }
 
 .top-bar {
-  position: relative; /* 추가 */
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,23 +15,26 @@ body {
   margin: 0 auto 12px;
   font-size: 20px;
   font-weight: bold;
+  gap: 12px;
 }
 
 .left {
   text-align: left;
+  flex: 1;
+  min-width: 0;
 }
 
 .right {
   text-align: right;
+  flex: 1;
+  min-width: 0;
 }
 
 #darkBtn {
-  position: absolute;      /* 핵심 */
+  position: absolute;
   left: 50%;
-  transform: translateX(-50%);
   top: 50%;
   transform: translate(-50%, -50%);
-
   width: 44px;
   height: 36px;
   border: none;
@@ -39,6 +42,7 @@ body {
   background: #e5e7eb;
   cursor: pointer;
   font-size: 16px;
+  z-index: 1;
 }
 
 #darkBtn:hover {
@@ -58,16 +62,19 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .need-left {
   font-size: 18px;
   font-weight: bold;
   text-align: left;
+  min-width: 0;
 }
 
 .need-right {
   text-align: right;
+  flex-shrink: 0;
 }
 
 #needSelect {
@@ -102,6 +109,7 @@ body {
 
 .groups-container {
   width: fit-content;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -119,6 +127,7 @@ body {
 
 .group-title {
   width: 70px;
+  min-width: 70px;
   font-weight: bold;
   text-align: right;
   padding-top: 30px;
@@ -234,4 +243,171 @@ body.dark #darkBtn:hover {
 
 body.dark .image-box:hover::after {
   border-color: #f87171;
+}
+
+/* 태블릿 */
+@media (max-width: 768px) {
+  body {
+    margin: 16px;
+  }
+
+  .top-bar {
+    font-size: 18px;
+    max-width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .need-box {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .group-row {
+    gap: 12px;
+  }
+
+  .group-title {
+    width: 60px;
+    min-width: 60px;
+    font-size: 15px;
+  }
+
+  .group-items {
+    grid-template-columns: repeat(4, 78px);
+    gap: 10px;
+  }
+
+  .image-box {
+    width: 70px;
+    height: 70px;
+  }
+
+  .empty {
+    width: 70px;
+    height: 70px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+}
+
+/* 모바일 */
+@media (max-width: 480px) {
+  body {
+    margin: 12px;
+  }
+
+  .top-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    font-size: 16px;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  .left {
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .right {
+    text-align: right;
+    font-size: 16px;
+  }
+
+  #darkBtn {
+    position: static;
+    transform: none;
+    width: 40px;
+    height: 34px;
+    justify-self: center;
+  }
+
+  .need-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .need-left {
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .need-right {
+    text-align: left;
+    width: 100%;
+  }
+
+  #needSelect {
+    width: 100%;
+    min-width: 0;
+    font-size: 14px;
+  }
+
+  .toggle-button,
+  .reset-button {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .toggle-button {
+    height: 42px;
+    font-size: 15px;
+  }
+
+  .reset-button {
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .groups-container {
+    width: 100%;
+  }
+
+  .group-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 0;
+  }
+
+  .group-title {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+    padding-top: 0;
+    font-size: 15px;
+  }
+
+  .group-items {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .item {
+    width: 100%;
+  }
+
+  .image-box {
+    width: 100%;
+    max-width: 72px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .empty {
+    width: 100%;
+    max-width: 72px;
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
+
+  .label {
+    font-size: 12px;
+    line-height: 1.3;
+  }
 }
