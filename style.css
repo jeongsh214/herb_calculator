@@ -373,7 +373,7 @@ body.dark .credit {
 @media (max-width: 480px) {
   body {
     margin: 0px;
-    padding-bottom: 20px;
+    padding-bottom: 35px;
   }
 
   .top-bar {
