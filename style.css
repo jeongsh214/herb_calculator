@@ -325,7 +325,8 @@ body.dark .credit {
 /* 태블릿 */
 @media (max-width: 768px) {
   body {
-    margin: 16px;
+    margin: 0px;
+    padding-bottom: 35px;
   }
 
   .top-bar {
