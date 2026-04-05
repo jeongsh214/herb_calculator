@@ -1,11 +1,10 @@
 let total = 0;
 let resultMap = {};
+let needMap = {};
 
 const IMG_PATH = "items/";
-const needSelect = document.getElementById("needSelect");
-const neededTotalsEl = document.getElementById("neededTotals");
+const DARK_MODE_KEY = "sharedDarkMode";
 
-let needMap = {};
 const scoreMap = {
   A: 1,
   B: 2,
@@ -54,26 +53,64 @@ const items = {
 const groupsContainer = document.getElementById("groupsContainer");
 const totalEl = document.getElementById("total");
 const resultEl = document.getElementById("result");
+const needSelect = document.getElementById("needSelect");
+const neededTotalsEl = document.getElementById("neededTotals");
+const darkBtn = document.getElementById("darkBtn");
+const resetBtn = document.getElementById("resetBtn");
+const toggleHeader = document.getElementById("toggleGroupsHeader");
+const groupsContent = document.getElementById("groupsContent");
+const groupCollapseIcon = document.getElementById("groupCollapseIcon");
+
+function isDarkMode() {
+  return document.documentElement.classList.contains("dark");
+}
+
+function createGroupTitle(group) {
+  const title = document.createElement("div");
+  title.className = "group-title";
+
+  const name = document.createElement("div");
+  name.className = "group-name";
+  name.innerText = groupLabels[group];
+
+  const score = document.createElement("div");
+  score.className = "group-score";
+  score.innerText = `+${scoreMap[group]}`;
+
+  title.appendChild(name);
+  title.appendChild(score);
+  return title;
+}
+
+function createImageBox(item, group) {
+  const imageBox = document.createElement("div");
+  imageBox.className = "image-box";
+
+  const img = document.createElement("img");
+  img.src = item.src;
+  img.alt = item.name;
+  img.dataset.group = group;
+  img.draggable = false;
+  img.setAttribute("draggable", "false");
+
+  imageBox.appendChild(img);
+
+  imageBox.addEventListener("click", () => toggleItem(img));
+  imageBox.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+
+  return imageBox;
+}
 
 function renderItems() {
+  groupsContainer.innerHTML = "";
+
   for (const group in items) {
     const row = document.createElement("div");
     row.className = "group-row";
-	
-const title = document.createElement("div");
-title.className = "group-title";
 
-const name = document.createElement("div");
-name.className = "group-name";
-name.innerText = groupLabels[group];
-
-const score = document.createElement("div");
-score.className = "group-score";
-score.innerText = `+${scoreMap[group]}`;
-
-title.appendChild(name);
-title.appendChild(score);
-
+    const title = createGroupTitle(group);
     const itemArea = document.createElement("div");
     itemArea.className = "group-items";
 
@@ -82,35 +119,35 @@ title.appendChild(score);
       wrapper.className = "item";
 
       if (!item) {
+        const emptyCard = document.createElement("div");
+        emptyCard.className = "item-card empty-card";
+
         const empty = document.createElement("div");
         empty.className = "empty";
-        wrapper.appendChild(empty);
+        emptyCard.appendChild(empty);
 
         const emptyLabel = document.createElement("div");
         emptyLabel.className = "label";
         emptyLabel.innerText = "";
-        wrapper.appendChild(emptyLabel);
+        emptyCard.appendChild(emptyLabel);
 
+        wrapper.appendChild(emptyCard);
         itemArea.appendChild(wrapper);
         return;
       }
 
-      const imageBox = document.createElement("div");
-      imageBox.className = "image-box";
+      const card = document.createElement("div");
+      card.className = "item-card";
 
-      const img = document.createElement("img");
-      img.src = item.src;
-      img.alt = item.name;
-      img.dataset.group = group;
-      img.onclick = () => toggleItem(img);
+      const imageBox = createImageBox(item, group);
 
       const label = document.createElement("div");
       label.className = "label";
       label.innerText = item.name;
 
-      imageBox.appendChild(img);
-      wrapper.appendChild(imageBox);
-      wrapper.appendChild(label);
+      card.appendChild(imageBox);
+      card.appendChild(label);
+      wrapper.appendChild(card);
       itemArea.appendChild(wrapper);
     });
 
@@ -135,32 +172,71 @@ async function loadCSV() {
     resultMap = {};
 
     rows.forEach((line) => {
-	const [score, result, color] = line.split(",");
-	if (score && result) {
-		resultMap[score.trim()] = {
-		text: result.trim(),
-		color: (color || "#000000").trim(),
-		};
-	}
-	});
+      const [score, result, color] = line.split(",");
+      if (score && result) {
+        resultMap[score.trim()] = {
+          text: result.trim(),
+          color: (color || "#000000").trim(),
+        };
+      }
+    });
 
     updateResult();
   } catch (error) {
     console.error("CSV 로드 실패:", error);
     resultEl.innerText = "CSV 오류";
+    resultEl.style.color = "#dc2626";
   }
+}
+
+async function loadNeedCSV() {
+  try {
+    const response = await fetch("./need.csv");
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const text = await response.text();
+    const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
+    const rows = lines.slice(1);
+
+    needMap = {};
+    needSelect.innerHTML = '<option value="">환 선택</option>';
+
+    rows.forEach((line) => {
+      const [name, need] = line.split(",");
+      if (name && need) {
+        const trimmedName = name.trim();
+        needMap[trimmedName] = need.trim();
+
+        const option = document.createElement("option");
+        option.value = trimmedName;
+        option.innerText = trimmedName;
+        needSelect.appendChild(option);
+      }
+    });
+  } catch (error) {
+    console.error("need.csv 로드 실패", error);
+  }
+}
+
+function getSelectedImages() {
+  return document.querySelectorAll("#groupsContainer img.selected");
 }
 
 function toggleItem(element) {
   const group = element.dataset.group;
   const score = scoreMap[group];
-  const selectedCount = document.querySelectorAll("img.selected").length;
-  const wrapper = element.parentElement.parentElement; // .item
-  const imageBox = element.parentElement; // .image-box
+  const selectedCount = getSelectedImages().length;
+  const wrapper = element.closest(".item");
+  const card = element.closest(".item-card");
+  const imageBox = element.closest(".image-box");
 
   if (element.classList.contains("selected")) {
     element.classList.remove("selected");
     wrapper.classList.remove("selected-item");
+    card.classList.remove("selected");
     imageBox.classList.remove("selected");
     total -= score;
   } else {
@@ -168,6 +244,7 @@ function toggleItem(element) {
 
     element.classList.add("selected");
     wrapper.classList.add("selected-item");
+    card.classList.add("selected");
     imageBox.classList.add("selected");
     total += score;
   }
@@ -177,11 +254,11 @@ function toggleItem(element) {
 }
 
 function updateResult() {
-  const selectedCount = document.querySelectorAll("img.selected").length;
+  const selectedCount = getSelectedImages().length;
 
   if (selectedCount < 3) {
     resultEl.innerText = "-";
-    resultEl.style.color = "#000000";
+    resultEl.style.color = isDarkMode() ? "#f9fafb" : "#000000";
     return;
   }
 
@@ -192,7 +269,7 @@ function updateResult() {
     resultEl.style.color = data.color;
   } else {
     resultEl.innerText = "-";
-    resultEl.style.color = "#000000";
+    resultEl.style.color = isDarkMode() ? "#f9fafb" : "#000000";
   }
 }
 
@@ -201,80 +278,77 @@ function reset() {
   totalEl.innerText = total;
 
   resultEl.innerText = "-";
-  resultEl.style.color = "#000000";
+  resultEl.style.color = isDarkMode() ? "#f9fafb" : "#000000";
 
-  document.querySelectorAll("img").forEach((img) => {
+  document.querySelectorAll("#groupsContainer img").forEach((img) => {
     img.classList.remove("selected");
   });
 
-  document.querySelectorAll(".item").forEach((item) => {
+  document.querySelectorAll("#groupsContainer .item").forEach((item) => {
     item.classList.remove("selected-item");
   });
 
-  document.querySelectorAll(".image-box").forEach((box) => {
+  document.querySelectorAll("#groupsContainer .item-card").forEach((card) => {
+    card.classList.remove("selected");
+  });
+
+  document.querySelectorAll("#groupsContainer .image-box").forEach((box) => {
     box.classList.remove("selected");
   });
 }
 
-renderItems();
-loadCSV();
-async function loadNeedCSV() {
-  try {
-    const response = await fetch("./need.csv");
-    const text = await response.text();
-
-    const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
-    const rows = lines.slice(1);
-
-    needMap = {};
-
-    rows.forEach((line) => {
-      const [name, need] = line.split(",");
-      if (name && need) {
-        needMap[name.trim()] = need.trim();
-
-        const option = document.createElement("option");
-        option.value = name.trim();
-        option.innerText = name.trim();
-        needSelect.appendChild(option);
-      }
-    });
-
-  } catch (e) {
-    console.error("need.csv 로드 실패", e);
-  }
-}
-needSelect.addEventListener("change", () => {
-  const selected = needSelect.value;
-
-  if (!selected || !needMap[selected]) {
-    neededTotalsEl.innerText = "-";
-    return;
-  }
-
-  neededTotalsEl.innerText = needMap[selected];
-});
-loadNeedCSV();
-
-const darkBtn = document.getElementById("darkBtn");
-
-// 저장된 값 적용
-if (localStorage.getItem("darkMode") === "on") {
-  document.body.classList.add("dark");
-  darkBtn.innerText = "☀️";
+function toggleGroups() {
+  const collapsed = groupsContent.classList.toggle("collapsed");
+  groupCollapseIcon.innerText = collapsed ? "+" : "−";
+  toggleHeader.setAttribute("aria-expanded", String(!collapsed));
 }
 
-// 버튼 클릭
-darkBtn.onclick = () => {
-  document.body.classList.toggle("dark");
+function applyDarkMode(isDark) {
+  document.documentElement.classList.toggle("dark", isDark);
+  darkBtn.innerText = isDark ? "☀️" : "🌙";
+  updateResult();
+}
 
-  const isDark = document.body.classList.contains("dark");
+function loadDarkMode() {
+  const saved = localStorage.getItem(DARK_MODE_KEY);
+  applyDarkMode(saved === "dark");
+}
 
-  if (isDark) {
-    localStorage.setItem("darkMode", "on");
-    darkBtn.innerText = "☀️";
-  } else {
-    localStorage.setItem("darkMode", "off");
-    darkBtn.innerText = "🌙";
-  }
-};
+function toggleDarkMode() {
+  const nextDark = !isDarkMode();
+  localStorage.setItem(DARK_MODE_KEY, nextDark ? "dark" : "light");
+  applyDarkMode(nextDark);
+}
+
+function bindEvents() {
+  needSelect.addEventListener("change", () => {
+    const selected = needSelect.value;
+    neededTotalsEl.innerText = selected && needMap[selected] ? needMap[selected] : "-";
+  });
+
+  darkBtn.addEventListener("click", toggleDarkMode);
+  resetBtn.addEventListener("click", reset);
+
+  toggleHeader.addEventListener("click", toggleGroups);
+  toggleHeader.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleGroups();
+    }
+  });
+
+  document.addEventListener("contextmenu", (e) => {
+    if (e.target.closest(".image-box")) {
+      e.preventDefault();
+    }
+  });
+}
+
+async function init() {
+  renderItems();
+  loadDarkMode();
+  bindEvents();
+  await Promise.all([loadCSV(), loadNeedCSV()]);
+}
+
+init();
